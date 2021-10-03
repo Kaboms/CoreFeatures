@@ -1,0 +1,12 @@
+{
+  "name": "com.kaboms.core-features",
+  "version": "1.0.0",
+  "displayName": "CoreFeatures",
+  "description": "Core functionality. Singleton, MessageBus, Timer, etc.",
+  "unity": "2018.1",
+  "author": {
+    "name": "Kaboms",
+    "email": "davidovmixa0@gmail.com",
+    "url": "https://github.com/Kaboms"
+  }
+}
