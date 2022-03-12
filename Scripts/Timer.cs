@@ -3,79 +3,125 @@ using UnityEngine.Events;
 
 namespace CoreFeatures.Timer
 {
-	public class Timer : MonoBehaviour
-	{
-		public enum EmitType 
-		{
-			Periodic,
-			OneShot
-		}
+    public class Timer : MonoBehaviour
+    {
+        /// <summary>
+        /// Emitted timer type
+        /// </summary>
+        public enum EmitType
+        {
+            Periodic,
+            OneShot
+        }
 
-		public float EmitTime { get; private set; }
-		public bool Started { get; private set; }
-		public EmitType Type { get; private set; }
+        /// <summary>
+        /// Timeout between emits
+        /// </summary>
+        public float Timeout { get; private set; }
+        /// <summary>
+        /// Is timer started
+        /// </summary>
+        public bool Started { get; private set; }
+        /// <summary>
+        /// Timer type
+        /// </summary>
+        public EmitType Type { get; private set; }
 
-		public bool EmitOnStart { get; private set; }
+        /// <summary>
+        /// Emit timer on <see cref="StartTimer"/>
+        /// </summary>
+        public bool EmitOnStart { get; private set; }
 
-		private UnityEvent _timerFinish = new UnityEvent();
+        /// <summary>
+        /// The event that must occur when emitting
+        /// </summary>
+        private UnityEvent _emitEvent = new UnityEvent();
 
-		private float PassedTime = 0;
-		//--------------------------------------------------------------------------
+        private float _passedTime = 0;
+        //--------------------------------------------------------------------------
 
-		public void Init(float emitTime, bool emitOnStart = false, EmitType type = EmitType.Periodic)
-		{
-			EmitTime = emitTime;
-			Type = type;
-			EmitOnStart = emitOnStart;
-		}
-		//--------------------------------------------------------------------------
+        /// <summary>
+        /// Add and init (<seealso cref="Init"/>) timer to game object
+        /// </summary>
+        /// <param name="gameObject">The gameobject to which the timer will be added</param>
+        /// <param name="timeout">Timer timeout</param>
+        /// <param name="emitOnStart">Emit timer on <see cref="StartTimer"/></param>
+        /// <param name="type"></param>
+        /// <returns>Timer added on the gameobject</returns>
+        public static Timer AddTimer(GameObject gameObject, float timeout, bool emitOnStart = false, EmitType type = EmitType.Periodic)
+        {
+            Timer timer = gameObject.AddComponent<Timer>();
+            timer.Init(timeout, emitOnStart, type);
+            return timer;
+        }
 
-		private void Update()
-		{
-			if (Started)
-			{
-				PassedTime += Time.deltaTime;
+        /// <summary>
+        /// Init timer
+        /// </summary>
+        /// <param name="timeout">Timer timeout</param>
+        /// <param name="emitOnStart">Emit timer on <see cref="StartTimer"/></param>
+        /// <param name="type"></param>
+        public void Init(float timeout, bool emitOnStart = false, EmitType type = EmitType.Periodic)
+        {
+            Timeout = timeout;
+            Type = type;
+            EmitOnStart = emitOnStart;
+        }
+        //--------------------------------------------------------------------------
 
-				if (PassedTime >= EmitTime)
-				{
-					Emit();
-				}
-			}
-		}
-		//--------------------------------------------------------------------------
+        private void Update()
+        {
+            if (Started)
+            {
+                _passedTime += Time.deltaTime;
 
-		public void StartTimer()
-		{
-			PassedTime = 0;
-			Started = true;
+                if (_passedTime >= Timeout)
+                {
+                    Emit();
+                }
+            }
+        }
+        //--------------------------------------------------------------------------
 
-			if (EmitOnStart)
-				Emit();
-		}
-		//--------------------------------------------------------------------------
+        /// <summary>
+        /// Start timer and make first emit if <see cref="EmitOnStart"/>
+        /// </summary>
+        public void StartTimer()
+        {
+            _passedTime = 0;
+            Started = true;
 
-		public void StopTimer()
-		{
-			Started = false;
-		}
-		//--------------------------------------------------------------------------
+            if (EmitOnStart)
+                Emit();
+        }
+        //--------------------------------------------------------------------------
 
-		public void AddListener(UnityAction callback)
-		{
-			_timerFinish.AddListener(callback);
-		}
-		//--------------------------------------------------------------------------
+        public void StopTimer()
+        {
+            Started = false;
+        }
+        //--------------------------------------------------------------------------
 
-		private void Emit()
-		{
-			PassedTime = 0;
+        /// <summary>
+        /// Add listener on timer emit
+        /// </summary>
+        /// <param name="callback">Callback on timer emit</param>
+        public void AddListener(UnityAction callback)
+        {
+            _emitEvent.AddListener(callback);
+        }
+        //--------------------------------------------------------------------------
 
-			if (Type == EmitType.OneShot)
-				StopTimer();
+        private void Emit()
+        {
+            _passedTime = 0;
 
-			_timerFinish?.Invoke();
-		}
-		//--------------------------------------------------------------------------
+            if (Type == EmitType.OneShot)
+                StopTimer();
 
-	}
+            _emitEvent?.Invoke();
+        }
+        //--------------------------------------------------------------------------
+
+    }
 }
