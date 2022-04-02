@@ -14,7 +14,7 @@ public sealed class ResourcesManager : Singleton<ResourcesManager>
     /// <param name="monoBehaviour"></param>
     public void Load(MonoBehaviour monoBehaviour)
     {
-        FieldInfo[] fieldInfos = monoBehaviour.GetType().GetFields();
+        FieldInfo[] fieldInfos = monoBehaviour.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
         foreach (FieldInfo field in fieldInfos)
         {
             if (!field.IsStatic && !field.IsInitOnly && !field.IsLiteral)
