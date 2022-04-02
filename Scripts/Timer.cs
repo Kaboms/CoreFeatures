@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace CoreFeatures.Timer
 {
-    public class Timer : MonoBehaviour
+    public sealed class Timer : MonoBehaviour
     {
         /// <summary>
         /// Emitted timer type

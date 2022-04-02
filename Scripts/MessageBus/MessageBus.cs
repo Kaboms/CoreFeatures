@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace CoreFeatures.MessageBus
 {
-    public class MessageBus : Singleton<MessageBus>
+    public sealed class MessageBus : Singleton<MessageBus>
     {
         private Dictionary<string, UnityEvent<Message>> _subsribers;
 
