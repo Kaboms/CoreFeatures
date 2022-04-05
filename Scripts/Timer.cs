@@ -96,6 +96,16 @@ namespace CoreFeatures.Timer
         }
         //--------------------------------------------------------------------------
 
+        /// <summary>
+        /// Start timer with <paramref name="timeout"/> and make first emit if <see cref="EmitOnStart"/>.
+        /// </summary>
+        public void StartTimer(float timeout)
+        {
+            Timeout = timeout;
+            StartTimer();
+        }
+        //--------------------------------------------------------------------------
+
         public void StopTimer()
         {
             Started = false;
