@@ -20,9 +20,17 @@ namespace CoreFeatures.Singleton
         {
             if (_instance == null)
             {
-                GameObject gameObject = new GameObject();
-                _instance = gameObject.AddComponent<T>();
-                gameObject.name = _instance.GetType().Name;
+                // Maybe instance already has been added on scene
+                T[] instances = Resources.FindObjectsOfTypeAll<T>();
+                if (instances.Length > 0)
+                {
+                    _instance = instances[0];
+                }
+                else
+                {
+                    GameObject gameObject = new GameObject(typeof(T).Name);
+                    _instance = gameObject.AddComponent<T>();
+                }
             }
             return _instance;
         }
